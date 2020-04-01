@@ -7,13 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8E70A0B02431AD5E000D6262 /* DevicesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E70A0AF2431AD5E000D6262 /* DevicesViewModel.swift */; };
+		8E70A0B32431B3FD000D6262 /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E70A0B22431B3FD000D6262 /* Peripheral.swift */; };
+		8E70A0B52431B71A000D6262 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E70A0B42431B71A000D6262 /* Constants.swift */; };
 		8E9ADD6F2411DD0100054BAA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9ADD6E2411DD0100054BAA /* AppDelegate.swift */; };
 		8E9ADD712411DD0100054BAA /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9ADD702411DD0100054BAA /* SceneDelegate.swift */; };
-		8E9ADD732411DD0100054BAA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9ADD722411DD0100054BAA /* ContentView.swift */; };
+		8E9ADD732411DD0100054BAA /* DevicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9ADD722411DD0100054BAA /* DevicesView.swift */; };
 		8E9ADD752411DD0300054BAA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E9ADD742411DD0300054BAA /* Assets.xcassets */; };
 		8E9ADD782411DD0300054BAA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E9ADD772411DD0300054BAA /* Preview Assets.xcassets */; };
 		8E9ADD7B2411DD0300054BAA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8E9ADD792411DD0300054BAA /* LaunchScreen.storyboard */; };
 		8E9ADD862411DD0400054BAA /* BLEThingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9ADD852411DD0400054BAA /* BLEThingTests.swift */; };
+		8E9ADDA12411E9CE00054BAA /* CBServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9ADDA02411E9CE00054BAA /* CBServiceProvider.swift */; };
+		8E9ADDA42411EA3300054BAA /* BLEService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9ADDA32411EA3300054BAA /* BLEService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -27,10 +32,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8E70A0AF2431AD5E000D6262 /* DevicesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesViewModel.swift; sourceTree = "<group>"; };
+		8E70A0B22431B3FD000D6262 /* Peripheral.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Peripheral.swift; sourceTree = "<group>"; };
+		8E70A0B42431B71A000D6262 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		8E9ADD6B2411DD0100054BAA /* BLEThing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BLEThing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E9ADD6E2411DD0100054BAA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8E9ADD702411DD0100054BAA /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		8E9ADD722411DD0100054BAA /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		8E9ADD722411DD0100054BAA /* DevicesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesView.swift; sourceTree = "<group>"; };
 		8E9ADD742411DD0300054BAA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8E9ADD772411DD0300054BAA /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		8E9ADD7A2411DD0300054BAA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -38,6 +46,8 @@
 		8E9ADD812411DD0400054BAA /* BLEThingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BLEThingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E9ADD852411DD0400054BAA /* BLEThingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEThingTests.swift; sourceTree = "<group>"; };
 		8E9ADD872411DD0400054BAA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8E9ADDA02411E9CE00054BAA /* CBServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBServiceProvider.swift; sourceTree = "<group>"; };
+		8E9ADDA32411EA3300054BAA /* BLEService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +68,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8E70A0AE2431AD42000D6262 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				8E9ADD722411DD0100054BAA /* DevicesView.swift */,
+				8E70A0AF2431AD5E000D6262 /* DevicesViewModel.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		8E70A0B12431B3ED000D6262 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				8E70A0B22431B3FD000D6262 /* Peripheral.swift */,
+				8E70A0B42431B71A000D6262 /* Constants.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		8E9ADD622411DD0100054BAA = {
 			isa = PBXGroup;
 			children = (
@@ -79,9 +107,11 @@
 		8E9ADD6D2411DD0100054BAA /* BLEThing */ = {
 			isa = PBXGroup;
 			children = (
+				8E70A0B12431B3ED000D6262 /* Model */,
+				8E9ADD902411DD2100054BAA /* BLE */,
+				8E70A0AE2431AD42000D6262 /* Views */,
 				8E9ADD6E2411DD0100054BAA /* AppDelegate.swift */,
 				8E9ADD702411DD0100054BAA /* SceneDelegate.swift */,
-				8E9ADD722411DD0100054BAA /* ContentView.swift */,
 				8E9ADD742411DD0300054BAA /* Assets.xcassets */,
 				8E9ADD792411DD0300054BAA /* LaunchScreen.storyboard */,
 				8E9ADD7C2411DD0300054BAA /* Info.plist */,
@@ -105,6 +135,31 @@
 				8E9ADD872411DD0400054BAA /* Info.plist */,
 			);
 			path = BLEThingTests;
+			sourceTree = "<group>";
+		};
+		8E9ADD902411DD2100054BAA /* BLE */ = {
+			isa = PBXGroup;
+			children = (
+				8E9ADDA22411EA2400054BAA /* Service */,
+				8E9ADD9F2411E98B00054BAA /* Provider */,
+			);
+			path = BLE;
+			sourceTree = "<group>";
+		};
+		8E9ADD9F2411E98B00054BAA /* Provider */ = {
+			isa = PBXGroup;
+			children = (
+				8E9ADDA02411E9CE00054BAA /* CBServiceProvider.swift */,
+			);
+			path = Provider;
+			sourceTree = "<group>";
+		};
+		8E9ADDA22411EA2400054BAA /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				8E9ADDA32411EA3300054BAA /* BLEService.swift */,
+			);
+			path = Service;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -208,8 +263,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				8E9ADD6F2411DD0100054BAA /* AppDelegate.swift in Sources */,
+				8E70A0B32431B3FD000D6262 /* Peripheral.swift in Sources */,
 				8E9ADD712411DD0100054BAA /* SceneDelegate.swift in Sources */,
-				8E9ADD732411DD0100054BAA /* ContentView.swift in Sources */,
+				8E9ADDA42411EA3300054BAA /* BLEService.swift in Sources */,
+				8E9ADD732411DD0100054BAA /* DevicesView.swift in Sources */,
+				8E70A0B02431AD5E000D6262 /* DevicesViewModel.swift in Sources */,
+				8E9ADDA12411E9CE00054BAA /* CBServiceProvider.swift in Sources */,
+				8E70A0B52431B71A000D6262 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
