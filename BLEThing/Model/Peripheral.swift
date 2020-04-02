@@ -13,4 +13,10 @@ enum PeripheralState {
 
 protocol Peripheral {
     var serviceIds: [String] { get }
+    var uuid: String { get }
+}
+
+struct MockPeripheral: Peripheral {
+    var serviceIds: [String] = ["serviceId:123:123:123"]
+    var uuid: String = "uuid:123:123:123"
 }

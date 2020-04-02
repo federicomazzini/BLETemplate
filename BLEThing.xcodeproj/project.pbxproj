@@ -19,6 +19,7 @@
 		8E9ADD862411DD0400054BAA /* BLEThingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9ADD852411DD0400054BAA /* BLEThingTests.swift */; };
 		8E9ADDA12411E9CE00054BAA /* CBServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9ADDA02411E9CE00054BAA /* CBServiceProvider.swift */; };
 		8E9ADDA42411EA3300054BAA /* BLEService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9ADDA32411EA3300054BAA /* BLEService.swift */; };
+		8EACFCF724343CB2001D0BEA /* DeviceRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EACFCF624343CB2001D0BEA /* DeviceRow.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +49,7 @@
 		8E9ADD872411DD0400054BAA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8E9ADDA02411E9CE00054BAA /* CBServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBServiceProvider.swift; sourceTree = "<group>"; };
 		8E9ADDA32411EA3300054BAA /* BLEService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEService.swift; sourceTree = "<group>"; };
+		8EACFCF624343CB2001D0BEA /* DeviceRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRow.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +75,7 @@
 			children = (
 				8E9ADD722411DD0100054BAA /* DevicesView.swift */,
 				8E70A0AF2431AD5E000D6262 /* DevicesViewModel.swift */,
+				8EACFCF624343CB2001D0BEA /* DeviceRow.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -263,6 +266,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8E9ADD6F2411DD0100054BAA /* AppDelegate.swift in Sources */,
+				8EACFCF724343CB2001D0BEA /* DeviceRow.swift in Sources */,
 				8E70A0B32431B3FD000D6262 /* Peripheral.swift in Sources */,
 				8E9ADD712411DD0100054BAA /* SceneDelegate.swift in Sources */,
 				8E9ADDA42411EA3300054BAA /* BLEService.swift in Sources */,

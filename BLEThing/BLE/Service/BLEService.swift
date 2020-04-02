@@ -6,11 +6,17 @@
 //
 
 import Foundation
+import Combine
+
+enum BLEError: Error {
+    case error
+}
 
 protocol BLEService {
+    associatedtype P: Peripheral
+    var connectedPeripheral: P? { get }
+    var discoveredPeripheralPublisher: AnyPublisher<P, Never>! { get }
 
-    /// Wait 3 seconds and return discovered peripherals in a stream.
-    func scan() -> [Peripheral]
 //    func connect(toPeripheral peripheral: Peripheral)
 //    func readUptime() -> UInt
 //    func writeTime(time: UInt)
