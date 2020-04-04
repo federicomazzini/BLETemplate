@@ -7,16 +7,19 @@
 
 import Foundation
 
-enum PeripheralState {
-    case idle, timerSet
-}
+struct Peripheral: Connectable {
+    var serviceIds: [String]
+    var uuid: String
 
-protocol Peripheral {
-    var serviceIds: [String] { get }
-    var uuid: String { get }
-}
+    init(serviceIds: [String], uuid: String) {
+        self.serviceIds = serviceIds
+        self.uuid = uuid
+    }
 
-struct MockPeripheral: Peripheral {
-    var serviceIds: [String] = ["serviceId:123:123:123"]
-    var uuid: String = "uuid:123:123:123"
+    init(connectable: Connectable) {
+        self.serviceIds = connectable.serviceIds
+        self.uuid = connectable.uuid
+    }
+
+    static let mockPeripheral = Peripheral(serviceIds: ["serviceId:123:123:123"], uuid: "uuid:123:123:123")
 }

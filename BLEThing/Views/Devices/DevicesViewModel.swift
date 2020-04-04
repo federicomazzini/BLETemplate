@@ -14,10 +14,11 @@ class DevicesViewModel: ObservableObject, Identifiable {
 
     private var disposables = Set<AnyCancellable>()
 
-    var bleService = CBServiceProvider()
+    var client: Client!
 
-    init() {
-        _ = bleService.discoveredPeripheralPublisher.sink { (peripheral) in
+    init(client: Client = Client()) {
+        _ = client.transport.discoveredPeripheralPublisher.sink { (connectable) in
+            let peripheral = Peripheral(connectable: connectable)
             let viewModel = DeviceRowViewModel(peripheral: peripheral)
             self.dataSource.append(viewModel)
         }
@@ -27,12 +28,11 @@ class DevicesViewModel: ObservableObject, Identifiable {
 
 struct DeviceRowViewModel: Identifiable {
     private let peripheral: Peripheral
+    var id: String {
+        return peripheral.uuid
+    }
 
     init(peripheral: Peripheral) {
         self.peripheral = peripheral
-    }
-
-    var id: String {
-        return peripheral.uuid
     }
 }

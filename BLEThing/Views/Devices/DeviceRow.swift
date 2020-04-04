@@ -27,7 +27,7 @@ struct DeviceRow: View {
 #if DEBUG
 struct DeviceRow_Previews: PreviewProvider {
     static var previews: some View {
-        let peripheral = MockPeripheral()
+        let peripheral = Peripheral.mockPeripheral//MockPeripheral()
         let viewModel = DeviceRowViewModel(peripheral: peripheral)
 
         // Display size categories

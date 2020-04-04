@@ -1,5 +1,5 @@
 //
-//  CBServiceProvider.swift
+//  CBTransport.swift
 //  BLEThing
 //
 //  Created by Nisum on 05-03-20.
@@ -9,15 +9,18 @@ import Foundation
 import CoreBluetooth
 import Combine
 
-class CBServiceProvider: NSObject, BLEService {
+class CBTransport: NSObject, Transport {
+
+    static let shared = CBTransport()
 
     var centralManager: CBCentralManager!
 
     // MARK: - Peripherals
 
-    var connectedPeripheral: CBPeripheral?
-    private var discoveredPeripheralSubject = PassthroughSubject<CBPeripheral, Never>()
-    var discoveredPeripheralPublisher: AnyPublisher<CBPeripheral, Never>!
+    private var _connectedPeripheral: CBPeripheral?
+    var connectedPeripheral: Connectable?
+    private var discoveredPeripheralSubject = PassthroughSubject<Connectable, Never>()
+    var discoveredPeripheralPublisher: AnyPublisher<Connectable, Never>!
     
     // MARK: - Services
 
@@ -45,7 +48,7 @@ class CBServiceProvider: NSObject, BLEService {
     }
 }
 
-extension CBServiceProvider: CBCentralManagerDelegate {
+extension CBTransport: CBCentralManagerDelegate {
 
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         switch central.state {
@@ -71,7 +74,7 @@ extension CBServiceProvider: CBCentralManagerDelegate {
                         didDiscover peripheral: CBPeripheral,
                         advertisementData: [String : Any],
                         rssi RSSI: NSNumber) {
-        discoveredPeripheralSubject.send(peripheral)
+        discoveredPeripheralSubject.send(peripheral.toConnectable())
 
 //        connectedPeripheral = peripheral
 //        connectedPeripheral.delegate = self // see CBPeripheralDelegate implementation.
@@ -81,18 +84,18 @@ extension CBServiceProvider: CBCentralManagerDelegate {
 
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         print("Connected!")
-        connectedPeripheral?.discoverServices([uptimeServiceCBUUID]) // requires didDiscoverServices implementation from CBPeripheralDelegate
+        _connectedPeripheral?.discoverServices([uptimeServiceCBUUID]) // requires didDiscoverServices implementation from CBPeripheralDelegate
     }
 
     func connect(toPeripheral peripheral: CBPeripheral) {
         connectedPeripheral = peripheral
-        connectedPeripheral?.delegate = self // see CBPeripheralDelegate implementation.
+        _connectedPeripheral?.delegate = self // see CBPeripheralDelegate implementation.
         centralManager.stopScan()
         centralManager.connect(peripheral)
     }
 }
 
-extension CBServiceProvider: CBPeripheralDelegate {
+extension CBTransport: CBPeripheralDelegate {
 
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         guard let services = peripheral.services else { return }
@@ -128,7 +131,7 @@ extension CBServiceProvider: CBPeripheralDelegate {
     }
 }
 
-extension CBServiceProvider {
+extension CBTransport {
     private func uptime(from characteristic: CBCharacteristic) -> Int {
         guard let characteristicData = characteristic.value else {
             return 0
@@ -158,14 +161,18 @@ extension CBServiceProvider {
     }
 }
 
-// MARK: - Peripheral
+// MARK: - CBPeripheral extension
 
-extension CBPeripheral: Peripheral {
+extension CBPeripheral: Connectable {
     var serviceIds: [String] {
         [Constants.uptimeServiceUUID]
     }
 
     var uuid: String {
         self.identifier.uuidString
+    }
+
+    func toConnectable() -> some Connectable {
+        return self
     }
 }

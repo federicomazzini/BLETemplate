@@ -1,5 +1,5 @@
 //
-//  BLEService.swift
+//  Client.swift
 //  BLEThing
 //
 //  Created by Nisum on 05-03-20.
@@ -12,10 +12,15 @@ enum BLEError: Error {
     case error
 }
 
-protocol BLEService {
-    associatedtype P: Peripheral
-    var connectedPeripheral: P? { get }
-    var discoveredPeripheralPublisher: AnyPublisher<P, Never>! { get }
+struct Client {
+    let transport: Transport
+
+    init(transport: Transport = CBTransport.shared) {
+        self.transport = transport
+    }
+
+    var connectedPeripheral: Connectable?
+    var discoveredPeripheralPublisher: AnyPublisher<Connectable, Never>!
 
 //    func connect(toPeripheral peripheral: Peripheral)
 //    func readUptime() -> UInt
