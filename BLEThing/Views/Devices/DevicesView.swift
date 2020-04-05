@@ -8,6 +8,10 @@
 import SwiftUI
 import Combine
 
+enum PushedItem {
+    case devicesScreen, servicesScreen
+}
+
 struct DevicesView: View {
     @ObservedObject var viewModel: DevicesViewModel
 
@@ -16,22 +20,30 @@ struct DevicesView: View {
     }
 
     var body: some View {
-      NavigationView {
-        List {
-          if viewModel.dataSource.isEmpty {
-            emptySection
-          } else {
-            devicesSection
-          }
-        }
-        .listStyle(GroupedListStyle())
-        .navigationBarTitle("Searching Devices")
-      }
+        let navigation = NavigationLink(
+            destination: ServicesView(viewModel: ServicesViewModel()),
+            isActive: $viewModel.connected
+        ) { EmptyView() }
+
+        return
+            NavigationView {
+                VStack {
+                    navigation
+                    List {
+                        if viewModel.dataSource.isEmpty {
+                            emptySection
+                        } else {
+                            devicesSection
+                        }
+                    }
+                    .listStyle(GroupedListStyle())
+                    .navigationBarTitle("Searching Devices")
+                }
+            }
     }
 
     var devicesSection: some View {
         Section {
-//            NavigationLink(destination: ServicesView(viewModel: ServicesViewModel(client: self.viewModel.client))) {
             ForEach(viewModel.dataSource, content: DeviceRowView.init(viewModel:))
         }
     }

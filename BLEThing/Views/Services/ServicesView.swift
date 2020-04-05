@@ -15,17 +15,15 @@ struct ServicesView: View {
     }
 
     var body: some View {
-      NavigationView {
         List {
-          if viewModel.dataSource.isEmpty {
-            emptySection
-          } else {
-            devicesSection
-          }
+            if viewModel.dataSource.isEmpty {
+                emptySection
+            } else {
+                devicesSection
+            }
         }
         .listStyle(GroupedListStyle())
         .navigationBarTitle("Searching Devices")
-      }
     }
 
     var devicesSection: some View {

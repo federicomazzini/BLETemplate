@@ -19,7 +19,7 @@ class ServicesViewModel: ObservableObject, Identifiable {
     init(client: Client = Client()) {
         _ = client.transport.connectedPeripheralPublisher
             .sink(receiveCompletion: { _ in
-                print("device disconnected")
+                print("device connected")
             }, receiveValue: { _ in })
     }
 }

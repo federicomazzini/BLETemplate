@@ -19,7 +19,7 @@ class CBTransport: NSObject, Transport {
     private var _discoveredPeripheralsSubject = PassthroughSubject<Connectable, Never>()
     private var _connectedPeripheralSubject = PassthroughSubject<Void, Never>()
     private var _connectedPeripheral: CBPeripheral?
-    private var _detectedPeripherals = Set<CBPeripheral>()
+    private var _discoveredPeripherals = Set<CBPeripheral>()
 
     // MARK: - Transport conformance
     var connectedPeripheral: Connectable?
@@ -27,12 +27,12 @@ class CBTransport: NSObject, Transport {
     var connectedPeripheralPublisher: AnyPublisher<Void, Never>!
 
     func connect(toConnectable connectable: Connectable) {
-        let per = _detectedPeripherals.filter({ (peripheral) -> Bool in
+        let per = _discoveredPeripherals.filter({ (peripheral) -> Bool in
             connectable.uuid == peripheral.uuid
         })
 
         guard let first = per.first else {
-            // send error through connected peripheral stream
+            // send error through _connectedPeripheralSubject
             return
         }
 
@@ -101,21 +101,17 @@ extension CBTransport: CBCentralManagerDelegate {
                         advertisementData: [String : Any],
                         rssi RSSI: NSNumber) {
         _discoveredPeripheralsSubject.send(peripheral.toConnectable())
+        _discoveredPeripherals.insert(peripheral)
     }
 
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         print("Connected!")
-        _connectedPeripheralSubject.send()
+        _connectedPeripheralSubject.send(completion: .finished)
         _connectedPeripheral?.discoverServices([uptimeServiceCBUUID]) // requires didDiscoverServices implementation from CBPeripheralDelegate
     }
 
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
-        _connectedPeripheralSubject.send(completion: .finished)
-
-//        implement completions the following way
-//        .sink(receiveCompletion: {  _ in
-//              UIApplication.shared.isNetworkActivityIndicatorVisible = false
-//        }
+        // send error through _connectedPeripheralSubject
     }
 }
 

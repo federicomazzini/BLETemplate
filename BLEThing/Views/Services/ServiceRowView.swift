@@ -10,16 +10,23 @@ import SwiftUI
 struct ServiceRowView: View {
 
     let viewModel: ServiceRowViewModel
+    let callToAction: CallToAction = nil
 
-    init(viewModel: ServiceRowViewModel) {
+    init(viewModel: ServiceRowViewModel, _ action: (() -> ())? = nil) {
         self.viewModel = viewModel
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text(viewModel.id)
-                .padding()
-                .border(Color.blue)
+        Button(action: {
+            if let callToAction = self.callToAction {
+                callToAction()
+            }
+        }) {
+            VStack(alignment: .leading, spacing: 10) {
+                Text(viewModel.id)
+                    .padding()
+                    .border(Color.blue)
+            }
         }
     }
 }
@@ -27,7 +34,7 @@ struct ServiceRowView: View {
 #if DEBUG
 struct ServiceRow_Previews: PreviewProvider {
     static var previews: some View {
-        let peripheral = Peripheral.mockPeripheral//MockPeripheral()
+        let peripheral = Peripheral.mockPeripheral
         let viewModel = ServiceRowViewModel(peripheral: peripheral)
 
         // Display size categories
