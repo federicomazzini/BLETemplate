@@ -1,17 +1,16 @@
 //
-//  DevicesView.swift
+//  ServicesView.swift
 //  BLEThing
 //
-//  Created by Nisum on 05-03-20.
+//  Created by Nisum on 04-04-20.
 //
 
 import SwiftUI
-import Combine
 
-struct DevicesView: View {
-    @ObservedObject var viewModel: DevicesViewModel
+struct ServicesView: View {
+    @ObservedObject var viewModel: ServicesViewModel
 
-    init(viewModel: DevicesViewModel = DevicesViewModel()) {
+    init(viewModel: ServicesViewModel = ServicesViewModel()) {
         self.viewModel = viewModel
     }
 
@@ -31,7 +30,6 @@ struct DevicesView: View {
 
     var devicesSection: some View {
         Section {
-//            NavigationLink(destination: ServicesView(viewModel: ServicesViewModel(client: self.viewModel.client))) {
             ForEach(viewModel.dataSource, content: DeviceRowView.init(viewModel:))
         }
     }
@@ -42,11 +40,11 @@ struct DevicesView: View {
           .foregroundColor(.gray)
       }
     }
-    
+
 }
 
-//struct ContentView_Previews: PreviewProvider {
+//struct ServicesView_Previews: PreviewProvider {
 //    static var previews: some View {
-//        DevicesView()
+//        ServicesView()
 //    }
 //}

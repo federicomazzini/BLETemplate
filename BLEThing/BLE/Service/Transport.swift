@@ -8,7 +8,18 @@
 import Foundation
 import Combine
 
+//enum TransportError: Error {
+//    case didDisconnect
+//}
+
 protocol Transport {
     var connectedPeripheral: Connectable? { get }
-    var discoveredPeripheralPublisher: AnyPublisher<Connectable, Never>! { get }
+    var discoveredPeripheralsPublisher: AnyPublisher<Connectable, Never>! { get }
+    var connectedPeripheralPublisher: AnyPublisher<Void, Never>! { get }
+
+    func connect(toConnectable connectable: Connectable)
+
+//    func readUptime() -> UInt
+//    func writeTime(time: UInt)
+//    func readState() -> PeripheralState
 }

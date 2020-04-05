@@ -17,7 +17,7 @@ class DevicesViewModel: ObservableObject, Identifiable {
     var client: Client!
 
     init(client: Client = Client()) {
-        _ = client.transport.discoveredPeripheralPublisher.sink { (connectable) in
+        _ = client.transport.discoveredPeripheralsPublisher.sink { (connectable) in
             let peripheral = Peripheral(connectable: connectable)
             let viewModel = DeviceRowViewModel(peripheral: peripheral)
             self.dataSource.append(viewModel)

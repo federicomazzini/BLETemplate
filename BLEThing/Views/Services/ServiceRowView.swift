@@ -1,17 +1,17 @@
 //
-//  DeviceRow.swift
+//  ServiceRowView.swift
 //  BLEThing
 //
-//  Created by Nisum on 01-04-20.
+//  Created by Nisum on 04-04-20.
 //
 
 import SwiftUI
 
-struct DeviceRow: View {
+struct ServiceRowView: View {
 
-    let viewModel: DeviceRowViewModel
+    let viewModel: ServiceRowViewModel
 
-    init(viewModel: DeviceRowViewModel) {
+    init(viewModel: ServiceRowViewModel) {
         self.viewModel = viewModel
     }
 
@@ -25,14 +25,14 @@ struct DeviceRow: View {
 }
 
 #if DEBUG
-struct DeviceRow_Previews: PreviewProvider {
+struct ServiceRow_Previews: PreviewProvider {
     static var previews: some View {
         let peripheral = Peripheral.mockPeripheral//MockPeripheral()
-        let viewModel = DeviceRowViewModel(peripheral: peripheral)
+        let viewModel = ServiceRowViewModel(peripheral: peripheral)
 
         // Display size categories
         return ForEach(ContentSizeCategory.allCases, id: \.self) { sizeCategory in
-            DeviceRow(viewModel: viewModel)
+            ServiceRowView(viewModel: viewModel)
                 .previewLayout(.sizeThatFits)
                 .environment(\.sizeCategory, sizeCategory)
                 .previewDisplayName("\(sizeCategory)")

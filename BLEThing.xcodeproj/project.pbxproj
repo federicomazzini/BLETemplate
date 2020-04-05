@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		8E5737E424392D5900D94F07 /* Transport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E5737E324392D5900D94F07 /* Transport.swift */; };
 		8E5737E624392D7900D94F07 /* Connectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E5737E524392D7900D94F07 /* Connectable.swift */; };
+		8E5737E9243967DF00D94F07 /* ServicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E5737E8243967DF00D94F07 /* ServicesView.swift */; };
+		8E5737EB2439686D00D94F07 /* ServicesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E5737EA2439686D00D94F07 /* ServicesViewModel.swift */; };
+		8E5737ED24396BE700D94F07 /* ServiceRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E5737EC24396BE700D94F07 /* ServiceRowView.swift */; };
 		8E70A0B02431AD5E000D6262 /* DevicesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E70A0AF2431AD5E000D6262 /* DevicesViewModel.swift */; };
 		8E70A0B32431B3FD000D6262 /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E70A0B22431B3FD000D6262 /* Peripheral.swift */; };
 		8E70A0B52431B71A000D6262 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E70A0B42431B71A000D6262 /* Constants.swift */; };
@@ -21,7 +24,7 @@
 		8E9ADD862411DD0400054BAA /* BLEThingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9ADD852411DD0400054BAA /* BLEThingTests.swift */; };
 		8E9ADDA12411E9CE00054BAA /* CBTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9ADDA02411E9CE00054BAA /* CBTransport.swift */; };
 		8E9ADDA42411EA3300054BAA /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9ADDA32411EA3300054BAA /* Client.swift */; };
-		8EACFCF724343CB2001D0BEA /* DeviceRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EACFCF624343CB2001D0BEA /* DeviceRow.swift */; };
+		8EACFCF724343CB2001D0BEA /* DeviceRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EACFCF624343CB2001D0BEA /* DeviceRowView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,6 +40,9 @@
 /* Begin PBXFileReference section */
 		8E5737E324392D5900D94F07 /* Transport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transport.swift; sourceTree = "<group>"; };
 		8E5737E524392D7900D94F07 /* Connectable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connectable.swift; sourceTree = "<group>"; };
+		8E5737E8243967DF00D94F07 /* ServicesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServicesView.swift; sourceTree = "<group>"; };
+		8E5737EA2439686D00D94F07 /* ServicesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServicesViewModel.swift; sourceTree = "<group>"; };
+		8E5737EC24396BE700D94F07 /* ServiceRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceRowView.swift; sourceTree = "<group>"; };
 		8E70A0AF2431AD5E000D6262 /* DevicesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesViewModel.swift; sourceTree = "<group>"; };
 		8E70A0B22431B3FD000D6262 /* Peripheral.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Peripheral.swift; sourceTree = "<group>"; };
 		8E70A0B42431B71A000D6262 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -53,7 +59,7 @@
 		8E9ADD872411DD0400054BAA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8E9ADDA02411E9CE00054BAA /* CBTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBTransport.swift; sourceTree = "<group>"; };
 		8E9ADDA32411EA3300054BAA /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
-		8EACFCF624343CB2001D0BEA /* DeviceRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRow.swift; sourceTree = "<group>"; };
+		8EACFCF624343CB2001D0BEA /* DeviceRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRowView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,14 +85,25 @@
 			children = (
 				8E9ADD722411DD0100054BAA /* DevicesView.swift */,
 				8E70A0AF2431AD5E000D6262 /* DevicesViewModel.swift */,
-				8EACFCF624343CB2001D0BEA /* DeviceRow.swift */,
+				8EACFCF624343CB2001D0BEA /* DeviceRowView.swift */,
 			);
 			path = Devices;
+			sourceTree = "<group>";
+		};
+		8E5737E7243967C700D94F07 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				8E5737E8243967DF00D94F07 /* ServicesView.swift */,
+				8E5737EA2439686D00D94F07 /* ServicesViewModel.swift */,
+				8E5737EC24396BE700D94F07 /* ServiceRowView.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 		8E70A0AE2431AD42000D6262 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				8E5737E7243967C700D94F07 /* Services */,
 				8E5737E224382C7B00D94F07 /* Devices */,
 			);
 			path = Views;
@@ -280,16 +297,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				8E9ADD6F2411DD0100054BAA /* AppDelegate.swift in Sources */,
-				8EACFCF724343CB2001D0BEA /* DeviceRow.swift in Sources */,
+				8EACFCF724343CB2001D0BEA /* DeviceRowView.swift in Sources */,
 				8E70A0B32431B3FD000D6262 /* Peripheral.swift in Sources */,
 				8E9ADD712411DD0100054BAA /* SceneDelegate.swift in Sources */,
 				8E9ADDA42411EA3300054BAA /* Client.swift in Sources */,
 				8E5737E624392D7900D94F07 /* Connectable.swift in Sources */,
 				8E9ADD732411DD0100054BAA /* DevicesView.swift in Sources */,
 				8E70A0B02431AD5E000D6262 /* DevicesViewModel.swift in Sources */,
+				8E5737E9243967DF00D94F07 /* ServicesView.swift in Sources */,
 				8E5737E424392D5900D94F07 /* Transport.swift in Sources */,
+				8E5737EB2439686D00D94F07 /* ServicesViewModel.swift in Sources */,
 				8E9ADDA12411E9CE00054BAA /* CBTransport.swift in Sources */,
 				8E70A0B52431B71A000D6262 /* Constants.swift in Sources */,
+				8E5737ED24396BE700D94F07 /* ServiceRowView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -15,12 +15,29 @@ class CBTransport: NSObject, Transport {
 
     var centralManager: CBCentralManager!
 
-    // MARK: - Peripherals
-
+    // MARK: - Private properties
+    private var _discoveredPeripheralsSubject = PassthroughSubject<Connectable, Never>()
+    private var _connectedPeripheralSubject = PassthroughSubject<Void, Never>()
     private var _connectedPeripheral: CBPeripheral?
+    private var _detectedPeripherals = Set<CBPeripheral>()
+
+    // MARK: - Transport conformance
     var connectedPeripheral: Connectable?
-    private var discoveredPeripheralSubject = PassthroughSubject<Connectable, Never>()
-    var discoveredPeripheralPublisher: AnyPublisher<Connectable, Never>!
+    var discoveredPeripheralsPublisher: AnyPublisher<Connectable, Never>!
+    var connectedPeripheralPublisher: AnyPublisher<Void, Never>!
+
+    func connect(toConnectable connectable: Connectable) {
+        let per = _detectedPeripherals.filter({ (peripheral) -> Bool in
+            connectable.uuid == peripheral.uuid
+        })
+
+        guard let first = per.first else {
+            // send error through connected peripheral stream
+            return
+        }
+
+        connect(toPeripheral: first)
+    }
     
     // MARK: - Services
 
@@ -31,22 +48,31 @@ class CBTransport: NSObject, Transport {
 
     // See CBCharacteristicProperties struct documentation.
     let uptimeCharacteristicCBUUID = CBUUID(string: Constants.uptimeCharacteristicUUID)
+
+    // MARK: - Init
     
     override init() {
         super.init()
         centralManager = CBCentralManager(delegate: self, queue: nil)
-        discoveredPeripheralPublisher = discoveredPeripheralSubject.eraseToAnyPublisher()
+        discoveredPeripheralsPublisher = _discoveredPeripheralsSubject.eraseToAnyPublisher()
+        connectedPeripheralPublisher = _connectedPeripheralSubject.eraseToAnyPublisher()
     }
 
-    func scan(ids: [String], options: [String: Any]?) {
-        let cbuuids = ids.map { CBUUID(string: $0) }
-        centralManager.scanForPeripherals(withServices: cbuuids, options: options)
-    }
+    // MARK: - Methods
 
     func scanForKnownPeripherals() {
         centralManager.scanForPeripherals(withServices: [uptimeServiceCBUUID])
     }
+
+    func connect(toPeripheral peripheral: CBPeripheral) {
+        connectedPeripheral = peripheral
+        _connectedPeripheral?.delegate = self // see CBPeripheralDelegate implementation.
+        centralManager.stopScan()
+        centralManager.connect(peripheral)
+    }
 }
+
+// MARK: - CBCentralManagerDelegate
 
 extension CBTransport: CBCentralManagerDelegate {
 
@@ -74,26 +100,26 @@ extension CBTransport: CBCentralManagerDelegate {
                         didDiscover peripheral: CBPeripheral,
                         advertisementData: [String : Any],
                         rssi RSSI: NSNumber) {
-        discoveredPeripheralSubject.send(peripheral.toConnectable())
-
-//        connectedPeripheral = peripheral
-//        connectedPeripheral.delegate = self // see CBPeripheralDelegate implementation.
-//        centralManager.stopScan()
-//        centralManager.connect(connectedPeripheral)
+        _discoveredPeripheralsSubject.send(peripheral.toConnectable())
     }
 
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         print("Connected!")
+        _connectedPeripheralSubject.send()
         _connectedPeripheral?.discoverServices([uptimeServiceCBUUID]) // requires didDiscoverServices implementation from CBPeripheralDelegate
     }
 
-    func connect(toPeripheral peripheral: CBPeripheral) {
-        connectedPeripheral = peripheral
-        _connectedPeripheral?.delegate = self // see CBPeripheralDelegate implementation.
-        centralManager.stopScan()
-        centralManager.connect(peripheral)
+    func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
+        _connectedPeripheralSubject.send(completion: .finished)
+
+//        implement completions the following way
+//        .sink(receiveCompletion: {  _ in
+//              UIApplication.shared.isNetworkActivityIndicatorVisible = false
+//        }
     }
 }
+
+// MARK: - CBPeripheralDelegate
 
 extension CBTransport: CBPeripheralDelegate {
 
@@ -131,6 +157,8 @@ extension CBTransport: CBPeripheralDelegate {
     }
 }
 
+// MARK: - Utils
+
 extension CBTransport {
     private func uptime(from characteristic: CBCharacteristic) -> Int {
         guard let characteristicData = characteristic.value else {
@@ -161,7 +189,7 @@ extension CBTransport {
     }
 }
 
-// MARK: - CBPeripheral extension
+// MARK: - CBPeripheral Connectable conformance
 
 extension CBPeripheral: Connectable {
     var serviceIds: [String] {
