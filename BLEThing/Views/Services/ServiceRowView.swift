@@ -9,11 +9,12 @@ import SwiftUI
 
 struct ServiceRowView: View {
 
-    let viewModel: ServiceRowViewModel
-    let callToAction: CallToAction = nil
+    private let viewModel: ServiceRowViewModel
+    private var callToAction: CallToAction = nil
 
-    init(viewModel: ServiceRowViewModel, _ action: (() -> ())? = nil) {
+    init(viewModel: ServiceRowViewModel) {
         self.viewModel = viewModel
+        self.callToAction = viewModel.callToAction
     }
 
     var body: some View {
@@ -34,8 +35,8 @@ struct ServiceRowView: View {
 #if DEBUG
 struct ServiceRow_Previews: PreviewProvider {
     static var previews: some View {
-        let peripheral = Peripheral.mockPeripheral
-        let viewModel = ServiceRowViewModel(peripheral: peripheral)
+        let service = Service.mockService
+        let viewModel = ServiceRowViewModel(service: service)
 
         // Display size categories
         return ForEach(ContentSizeCategory.allCases, id: \.self) { sizeCategory in

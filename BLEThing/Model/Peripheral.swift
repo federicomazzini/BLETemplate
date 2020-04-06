@@ -23,3 +23,17 @@ struct Peripheral: Connectable {
 
     static let mockPeripheral = Peripheral(serviceIds: ["serviceId:123:123:123"], uuid: "uuid:123:123:123")
 }
+
+struct Service: ConnectableService {
+    var uuidString: String
+
+    init(uuid: String) {
+        self.uuidString = uuid
+    }
+
+    init(connectableService: ConnectableService) {
+        self.uuidString = connectableService.uuidString
+    }
+
+    static let mockService = Service(uuid: "uuid:123:123:123")
+}

@@ -15,3 +15,7 @@ protocol Connectable {
     var serviceIds: [String] { get }
     var uuid: String { get }
 }
+
+protocol ConnectableService {
+    var uuidString: String { get }
+}

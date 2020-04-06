@@ -10,27 +10,36 @@ import Combine
 
 class ServicesViewModel: ObservableObject, Identifiable {
 
-    @Published var dataSource: [DeviceRowViewModel] = []
+    @Published var dataSource: [ServiceRowViewModel] = []
 
     private var disposables = Set<AnyCancellable>()
 
     var client: Client!
 
     init(client: Client = Client()) {
-        _ = client.transport.connectedPeripheralPublisher
-            .sink(receiveCompletion: { _ in
-                print("device connected")
-            }, receiveValue: { _ in })
+        // get discovered services and update dataSource
+        _ = client.transport.discoveredServicesPublisher
+            .sink { (service) in
+                let service = Service(connectableService: service)
+                let viewModel = ServiceRowViewModel(service: service, {
+                    // subscribe to service
+                })
+                self.dataSource.append(viewModel)
+            }
+            .store(in: &disposables)
     }
 }
 
 struct ServiceRowViewModel: Identifiable {
-    private let peripheral: Peripheral
+    private let service: Service
+    let callToAction: CallToAction
+
     var id: String {
-        return peripheral.uuid
+        return service.uuidString
     }
 
-    init(peripheral: Peripheral) {
-        self.peripheral = peripheral
+    init(service: Service, _ callToAction: CallToAction = nil) {
+        self.service = service
+        self.callToAction = callToAction
     }
 }

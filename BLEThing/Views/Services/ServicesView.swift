@@ -23,12 +23,12 @@ struct ServicesView: View {
             }
         }
         .listStyle(GroupedListStyle())
-        .navigationBarTitle("Searching Devices")
+        .navigationBarTitle("Searching Services")
     }
 
     var devicesSection: some View {
         Section {
-            ForEach(viewModel.dataSource, content: DeviceRowView.init(viewModel:))
+            ForEach(viewModel.dataSource, content: ServiceRowView.init(viewModel:))
         }
     }
 

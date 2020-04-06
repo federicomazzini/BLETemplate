@@ -19,6 +19,8 @@ class DevicesViewModel: ObservableObject, Identifiable {
 
     init(client: Client = Client()) {
         self.client = client
+
+        // get discovered peripherals and update dataSource
         _ = client.transport.discoveredPeripheralsPublisher
             .sink { (connectable) in
                 let peripheral = Peripheral(connectable: connectable)
@@ -29,6 +31,7 @@ class DevicesViewModel: ObservableObject, Identifiable {
             }
             .store(in: &disposables)
 
+        // verify if connected and publish "connected = true"
         _ = client.transport.connectedPeripheralPublisher
             .sink(receiveCompletion: { _ in
                 print("DevicesViewModel: device connected")

@@ -20,11 +20,14 @@ class CBTransport: NSObject, Transport {
     private var _connectedPeripheralSubject = PassthroughSubject<Void, Never>()
     private var _connectedPeripheral: CBPeripheral?
     private var _discoveredPeripherals = Set<CBPeripheral>()
+    private var _discoveredServicesSubject = PassthroughSubject<ConnectableService, Never>()
+    private var _discoveredServices = Set<CBService>()
 
     // MARK: - Transport conformance
     var connectedPeripheral: Connectable?
     var discoveredPeripheralsPublisher: AnyPublisher<Connectable, Never>!
     var connectedPeripheralPublisher: AnyPublisher<Void, Never>!
+    var discoveredServicesPublisher: AnyPublisher<ConnectableService, Never>!
 
     func connect(toConnectable connectable: Connectable) {
         let per = _discoveredPeripherals.filter({ (peripheral) -> Bool in
@@ -32,7 +35,7 @@ class CBTransport: NSObject, Transport {
         })
 
         guard let first = per.first else {
-            // send error through _connectedPeripheralSubject
+            // TODO: send error through _connectedPeripheralSubject
             return
         }
 
@@ -56,6 +59,7 @@ class CBTransport: NSObject, Transport {
         centralManager = CBCentralManager(delegate: self, queue: nil)
         discoveredPeripheralsPublisher = _discoveredPeripheralsSubject.eraseToAnyPublisher()
         connectedPeripheralPublisher = _connectedPeripheralSubject.eraseToAnyPublisher()
+        discoveredServicesPublisher = _discoveredServicesSubject.eraseToAnyPublisher()
     }
 
     // MARK: - Methods
@@ -66,6 +70,7 @@ class CBTransport: NSObject, Transport {
 
     func connect(toPeripheral peripheral: CBPeripheral) {
         connectedPeripheral = peripheral
+        _connectedPeripheral = peripheral
         _connectedPeripheral?.delegate = self // see CBPeripheralDelegate implementation.
         centralManager.stopScan()
         centralManager.connect(peripheral)
@@ -111,7 +116,7 @@ extension CBTransport: CBCentralManagerDelegate {
     }
 
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
-        // send error through _connectedPeripheralSubject
+        // TODO: send error through _connectedPeripheralSubject
     }
 }
 
@@ -121,7 +126,11 @@ extension CBTransport: CBPeripheralDelegate {
 
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         guard let services = peripheral.services else { return }
+
         for service in services {
+            _discoveredServicesSubject.send(service.toConnectable())
+            _discoveredServices.insert(service)
+
             // To obtain the characteristics of a service, you’ll need to explicitly request the discovery of the service’s characteristics.
             peripheral.discoverCharacteristics(nil, for: service) // requires didDiscoverCharacteristicsFor implementation
         }
@@ -197,6 +206,18 @@ extension CBPeripheral: Connectable {
     }
 
     func toConnectable() -> some Connectable {
+        return self
+    }
+}
+
+// MARK: - CBService ConnectableService conformance
+
+extension CBService: ConnectableService {
+    var uuidString: String {
+        self.uuid.uuidString
+    }
+
+    func toConnectable() -> some ConnectableService {
         return self
     }
 }
