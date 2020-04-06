@@ -16,7 +16,7 @@ protocol Transport {
     var connectedPeripheral: Connectable? { get }
     var discoveredPeripheralsPublisher: AnyPublisher<Connectable, Never>! { get }
     var connectedPeripheralPublisher: AnyPublisher<Void, Never>! { get }
-    var discoveredServicesPublisher: AnyPublisher<ConnectableService, Never>! { get }
+    var discoveredCharacteristicsPublisher: AnyPublisher<ConnectableCharacteristic, Never>! { get }
 
     func connect(toConnectable connectable: Connectable)
 

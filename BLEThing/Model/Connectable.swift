@@ -7,8 +7,8 @@
 
 import Foundation
 
-enum ConnectableState {
-    case idle, timerSet
+enum ConnectableCharacteristicType {
+    case read, write
 }
 
 protocol Connectable {
@@ -16,6 +16,7 @@ protocol Connectable {
     var uuid: String { get }
 }
 
-protocol ConnectableService {
+protocol ConnectableCharacteristic {
     var uuidString: String { get }
+    var type: ConnectableCharacteristicType { get }
 }

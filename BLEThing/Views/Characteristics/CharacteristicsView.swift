@@ -1,5 +1,5 @@
 //
-//  ServicesView.swift
+//  CharacteristicsView.swift
 //  BLEThing
 //
 //  Created by Nisum on 04-04-20.
@@ -7,10 +7,10 @@
 
 import SwiftUI
 
-struct ServicesView: View {
-    @ObservedObject var viewModel: ServicesViewModel
+struct CharacteristicsView: View {
+    @ObservedObject var viewModel: CharacteristicsViewModel
 
-    init(viewModel: ServicesViewModel = ServicesViewModel()) {
+    init(viewModel: CharacteristicsViewModel = CharacteristicsViewModel()) {
         self.viewModel = viewModel
     }
 
@@ -23,12 +23,12 @@ struct ServicesView: View {
             }
         }
         .listStyle(GroupedListStyle())
-        .navigationBarTitle("Searching Services")
+        .navigationBarTitle("Searching Characteristics")
     }
 
     var devicesSection: some View {
         Section {
-            ForEach(viewModel.dataSource, content: ServiceRowView.init(viewModel:))
+            ForEach(viewModel.dataSource, content: CharacteristicRowView.init(viewModel:))
         }
     }
 
@@ -41,8 +41,8 @@ struct ServicesView: View {
 
 }
 
-//struct ServicesView_Previews: PreviewProvider {
+//struct CharacteristicsView_Previews: PreviewProvider {
 //    static var previews: some View {
-//        ServicesView()
+//        CharacteristicsView()
 //    }
 //}

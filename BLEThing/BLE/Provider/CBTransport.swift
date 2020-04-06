@@ -20,14 +20,14 @@ class CBTransport: NSObject, Transport {
     private var _connectedPeripheralSubject = PassthroughSubject<Void, Never>()
     private var _connectedPeripheral: CBPeripheral?
     private var _discoveredPeripherals = Set<CBPeripheral>()
-    private var _discoveredServicesSubject = PassthroughSubject<ConnectableService, Never>()
-    private var _discoveredServices = Set<CBService>()
+    private var _discoveredCharacteristicsSubject = PassthroughSubject<ConnectableCharacteristic, Never>()
+    private var _discoveredCharacteristics = Set<CBCharacteristic>()
 
     // MARK: - Transport conformance
     var connectedPeripheral: Connectable?
     var discoveredPeripheralsPublisher: AnyPublisher<Connectable, Never>!
     var connectedPeripheralPublisher: AnyPublisher<Void, Never>!
-    var discoveredServicesPublisher: AnyPublisher<ConnectableService, Never>!
+    var discoveredCharacteristicsPublisher: AnyPublisher<ConnectableCharacteristic, Never>!
 
     func connect(toConnectable connectable: Connectable) {
         let per = _discoveredPeripherals.filter({ (peripheral) -> Bool in
@@ -50,7 +50,7 @@ class CBTransport: NSObject, Transport {
     // MARK: - Characteristics
 
     // See CBCharacteristicProperties struct documentation.
-    let uptimeCharacteristicCBUUID = CBUUID(string: Constants.uptimeCharacteristicUUID)
+    let uptimeCharacteristicCBUUID = CBUUID(string: Constants.Characteristics.uptimeCharacteristicUUID.rawValue)
 
     // MARK: - Init
     
@@ -59,7 +59,7 @@ class CBTransport: NSObject, Transport {
         centralManager = CBCentralManager(delegate: self, queue: nil)
         discoveredPeripheralsPublisher = _discoveredPeripheralsSubject.eraseToAnyPublisher()
         connectedPeripheralPublisher = _connectedPeripheralSubject.eraseToAnyPublisher()
-        discoveredServicesPublisher = _discoveredServicesSubject.eraseToAnyPublisher()
+        discoveredCharacteristicsPublisher = _discoveredCharacteristicsSubject.eraseToAnyPublisher()
     }
 
     // MARK: - Methods
@@ -128,9 +128,6 @@ extension CBTransport: CBPeripheralDelegate {
         guard let services = peripheral.services else { return }
 
         for service in services {
-            _discoveredServicesSubject.send(service.toConnectable())
-            _discoveredServices.insert(service)
-
             // To obtain the characteristics of a service, you’ll need to explicitly request the discovery of the service’s characteristics.
             peripheral.discoverCharacteristics(nil, for: service) // requires didDiscoverCharacteristicsFor implementation
         }
@@ -146,7 +143,12 @@ extension CBTransport: CBPeripheralDelegate {
             if characteristic.properties.contains(.notify) {
               print("Characteristic properties contains .notify")
             }
+            if characteristic.properties.contains(.write) {
+              print("Characteristic properties contains .write")
+            }
 
+            _discoveredCharacteristicsSubject.send(characteristic.toConnectable())
+            _discoveredCharacteristics.insert(characteristic)
             peripheral.readValue(for: characteristic) // requires peripheral(_:didUpdateValueFor:error:) implementation.
         }
     }
@@ -212,12 +214,20 @@ extension CBPeripheral: Connectable {
 
 // MARK: - CBService ConnectableService conformance
 
-extension CBService: ConnectableService {
+extension CBCharacteristic: ConnectableCharacteristic {
+    var type: ConnectableCharacteristicType {
+        if self.properties.contains(.write) {
+            return .write
+        } else {
+            return .read
+        }
+    }
+
     var uuidString: String {
         self.uuid.uuidString
     }
 
-    func toConnectable() -> some ConnectableService {
+    func toConnectable() -> some ConnectableCharacteristic {
         return self
     }
 }

@@ -9,7 +9,7 @@ import SwiftUI
 import Combine
 
 enum PushedItem {
-    case devicesScreen, servicesScreen
+    case devicesScreen, CharacteristicsScreen
 }
 
 struct DevicesView: View {
@@ -21,7 +21,7 @@ struct DevicesView: View {
 
     var body: some View {
         let navigation = NavigationLink(
-            destination: ServicesView(viewModel: ServicesViewModel()),
+            destination: CharacteristicsView(viewModel: CharacteristicsViewModel()),
             isActive: $viewModel.connected
         ) { EmptyView() }
 

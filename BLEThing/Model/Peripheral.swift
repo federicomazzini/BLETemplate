@@ -21,19 +21,28 @@ struct Peripheral: Connectable {
         self.uuid = connectable.uuid
     }
 
-    static let mockPeripheral = Peripheral(serviceIds: ["serviceId:123:123:123"], uuid: "uuid:123:123:123")
+    static let mockPeripheral = Peripheral(
+        serviceIds: [Constants.Characteristics.uptimeCharacteristicUUID.rawValue],
+        uuid: Constants.uptimeServiceUUID
+    )
 }
 
-struct Service: ConnectableService {
+struct Characteristic: ConnectableCharacteristic {
     var uuidString: String
+    var type: ConnectableCharacteristicType
 
-    init(uuid: String) {
+    init(uuid: String, type: ConnectableCharacteristicType) {
         self.uuidString = uuid
+        self.type = type
     }
 
-    init(connectableService: ConnectableService) {
-        self.uuidString = connectableService.uuidString
+    init(connectableCharacteristic: ConnectableCharacteristic) {
+        self.uuidString = connectableCharacteristic.uuidString
+        self.type = connectableCharacteristic.type
     }
 
-    static let mockService = Service(uuid: "uuid:123:123:123")
+    static let mockCharacteristic = Characteristic(
+        uuid: Constants.Characteristics.uptimeCharacteristicUUID.rawValue,
+        type: .read
+    )
 }
