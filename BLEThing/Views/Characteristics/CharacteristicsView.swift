@@ -15,15 +15,24 @@ struct CharacteristicsView: View {
     }
 
     var body: some View {
-        List {
-            if viewModel.dataSource.isEmpty {
-                emptySection
-            } else {
-                devicesSection
+        let navigation = NavigationLink(
+            destination: WriteToCharacteristicView(viewModel: WriteToCharacteristicViewModel()),
+            isActive: $viewModel.selectWriteCharacteristic
+        ) { EmptyView() }
+
+        return
+            VStack {
+                navigation
+                List {
+                    if viewModel.dataSource.isEmpty {
+                        emptySection
+                    } else {
+                        devicesSection
+                    }
+                }
+                .listStyle(GroupedListStyle())
+                .navigationBarTitle("Searching Characteristics")
             }
-        }
-        .listStyle(GroupedListStyle())
-        .navigationBarTitle("Searching Characteristics")
     }
 
     var devicesSection: some View {

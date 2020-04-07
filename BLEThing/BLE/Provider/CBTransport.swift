@@ -28,19 +28,6 @@ class CBTransport: NSObject, Transport {
     var discoveredPeripheralsPublisher: AnyPublisher<Connectable, Never>!
     var connectedPeripheralPublisher: AnyPublisher<Void, Never>!
     var discoveredCharacteristicsPublisher: AnyPublisher<ConnectableCharacteristic, Never>!
-
-    func connect(toConnectable connectable: Connectable) {
-        let per = _discoveredPeripherals.filter({ (peripheral) -> Bool in
-            connectable.uuid == peripheral.uuid
-        })
-
-        guard let first = per.first else {
-            // TODO: send error through _connectedPeripheralSubject
-            return
-        }
-
-        connect(toPeripheral: first)
-    }
     
     // MARK: - Services
 
@@ -74,6 +61,42 @@ class CBTransport: NSObject, Transport {
         _connectedPeripheral?.delegate = self // see CBPeripheralDelegate implementation.
         centralManager.stopScan()
         centralManager.connect(peripheral)
+    }
+
+    func connect(toConnectable connectable: Connectable) {
+        let pers = _discoveredPeripherals.filter({ (peripheral) -> Bool in
+            connectable.uuid == peripheral.uuid
+        })
+
+        guard let first = pers.first else {
+            // TODO: send error through _connectedPeripheralSubject
+            return
+        }
+
+        connect(toPeripheral: first)
+    }
+
+    func writeTime(_ seconds: UInt) {
+        let chars = _discoveredCharacteristics.filter({ (characteristic) -> Bool in
+            characteristic.properties.contains(.write)
+        })
+
+        guard let first = chars.first else {
+            // TODO: send error through ...
+            return
+        }
+
+        var data: Data!
+
+        do {
+            data = try JSONEncoder().encode(seconds)
+        }
+        catch {
+            print("Couldn't create the json string for date \(self)")
+            return
+        }
+
+        _connectedPeripheral?.writeValue(data, for: first, type: .withResponse)
     }
 }
 
@@ -177,15 +200,15 @@ extension CBTransport {
             return 0
         }
 
-        guard let dic = convertToDictionary(text: string) else {
+        guard let dic = JSONStringToDictionary(string: string) else {
             return 0
         }
 
         return dic["uptime"] as? Int ?? 0
     }
 
-    func convertToDictionary(text: String) -> [String: Any]? {
-        if let data = text.data(using: .utf8) {
+    func JSONStringToDictionary(string: String) -> [String: Any]? {
+        if let data = string.data(using: .utf8) {
             do {
                 return try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
             } catch {

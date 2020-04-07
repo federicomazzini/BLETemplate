@@ -19,6 +19,7 @@ protocol Transport {
     var discoveredCharacteristicsPublisher: AnyPublisher<ConnectableCharacteristic, Never>! { get }
 
     func connect(toConnectable connectable: Connectable)
+    func writeTime(_ seconds: UInt)
 
 //    func readUptime() -> UInt
 //    func writeTime(time: UInt)

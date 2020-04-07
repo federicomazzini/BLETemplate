@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Combine
 
 enum PushedItem {
     case devicesScreen, CharacteristicsScreen

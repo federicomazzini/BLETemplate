@@ -11,22 +11,31 @@ import Combine
 class CharacteristicsViewModel: ObservableObject, Identifiable {
 
     @Published var dataSource: [CharacteristicRowViewModel] = []
+    @Published var selectWriteCharacteristic: Bool = false
 
     private var disposables = Set<AnyCancellable>()
 
     var client: Client!
 
     init(client: Client = Client()) {
-        // get discovered Characteristics and update dataSource
+        self.client = client
+        
+        // get discovered characteristics and update dataSource
         _ = client.transport.discoveredCharacteristicsPublisher
             .sink { (connectableCharacteristic) in
                 let characteristic = Characteristic(connectableCharacteristic: connectableCharacteristic)
                 let viewModel = CharacteristicRowViewModel(characteristic: characteristic, {
-                    // subscribe to Characteristic
+                    self.selectedCharacteristic(characteristic: characteristic)
                 })
                 self.dataSource.append(viewModel)
             }
             .store(in: &disposables)
+    }
+
+    func selectedCharacteristic(characteristic: Characteristic) {
+        if characteristic.type == .write {
+            selectWriteCharacteristic = true
+        }
     }
 }
 
