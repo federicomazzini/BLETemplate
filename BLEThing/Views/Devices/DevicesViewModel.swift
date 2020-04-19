@@ -34,14 +34,26 @@ class DevicesViewModel: ObservableObject, Identifiable {
         // verify if connected and publish "connected = true"
         _ = client.transport.connectedPeripheralPublisher
             .sink(receiveCompletion: { _ in
-                print("DevicesViewModel: device connected")
-                self.connected = true
-            }, receiveValue: { _ in })
+                fatalError("fatalError: connectedPeripheralPublisher completetion.")
+            }, receiveValue: { state in
+                switch state {
+                case .connected:
+                    print("DevicesViewModel: device connected")
+                    self.connected = true
+                case .disconnected:
+                    print("DevicesViewModel: device disconnected")
+                    self.connected = false
+                }
+            })
             .store(in: &disposables)
     }
 
     func connect(toPeripheral peripheral: Peripheral) {
         client.transport.connect(toConnectable: peripheral)
+    }
+
+    func disconnect() {
+        client.transport.cancelConnection()
     }
 }
 

@@ -11,6 +11,10 @@ enum ConnectableCharacteristicType {
     case read, write
 }
 
+enum ConnectableState {
+    case connected, disconnected
+}
+
 protocol Connectable {
     var serviceIds: [String] { get }
     var uuid: String { get }

@@ -18,7 +18,7 @@ struct CharacteristicsView: View {
         let navigation = NavigationLink(
             destination: WriteToCharacteristicView(viewModel: WriteToCharacteristicViewModel()),
             isActive: $viewModel.selectWriteCharacteristic
-        ) { EmptyView() }
+        ) { EmptyView() }.isDetailLink(false)
 
         return
             VStack {
@@ -31,8 +31,8 @@ struct CharacteristicsView: View {
                     }
                 }
                 .listStyle(GroupedListStyle())
-                .navigationBarTitle("Searching Characteristics")
-            }
+                .navigationBarTitle("Searching Characteristics", displayMode: .inline)
+        }
     }
 
     var devicesSection: some View {

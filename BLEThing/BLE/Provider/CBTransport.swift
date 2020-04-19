@@ -17,7 +17,7 @@ class CBTransport: NSObject, Transport {
 
     // MARK: - Private properties
     private var _discoveredPeripheralsSubject = PassthroughSubject<Connectable, Never>()
-    private var _connectedPeripheralSubject = PassthroughSubject<Void, Never>()
+    private var _connectedPeripheralSubject = PassthroughSubject<ConnectableState, Never>()
     private var _connectedPeripheral: CBPeripheral?
     private var _discoveredPeripherals = Set<CBPeripheral>()
     private var _discoveredCharacteristicsSubject = PassthroughSubject<ConnectableCharacteristic, Never>()
@@ -26,7 +26,7 @@ class CBTransport: NSObject, Transport {
     // MARK: - Transport conformance
     var connectedPeripheral: Connectable?
     var discoveredPeripheralsPublisher: AnyPublisher<Connectable, Never>!
-    var connectedPeripheralPublisher: AnyPublisher<Void, Never>!
+    var connectedPeripheralPublisher: AnyPublisher<ConnectableState, Never>!
     var discoveredCharacteristicsPublisher: AnyPublisher<ConnectableCharacteristic, Never>!
     
     // MARK: - Services
@@ -82,7 +82,7 @@ class CBTransport: NSObject, Transport {
         })
 
         guard let first = chars.first else {
-            // TODO: send error through ...
+            // TODO: send error through _connectedPeripheralSubject
             return
         }
 
@@ -97,6 +97,12 @@ class CBTransport: NSObject, Transport {
         }
 
         _connectedPeripheral?.writeValue(data, for: first, type: .withResponse)
+    }
+
+    func cancelConnection() {
+        if let peripheral = _connectedPeripheral {
+            centralManager.cancelPeripheralConnection(peripheral)
+        }
     }
 }
 
@@ -134,13 +140,14 @@ extension CBTransport: CBCentralManagerDelegate {
 
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         print("Connected!")
-        _connectedPeripheralSubject.send(completion: .finished)
+        _connectedPeripheralSubject.send(.connected)
         _connectedPeripheral?.discoverServices([uptimeServiceCBUUID]) // requires didDiscoverServices implementation from CBPeripheralDelegate
     }
 
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
-        // TODO: send error through _connectedPeripheralSubject
+        _connectedPeripheralSubject.send(.disconnected)
     }
+
 }
 
 // MARK: - CBPeripheralDelegate
@@ -185,6 +192,7 @@ extension CBTransport: CBPeripheralDelegate {
             print("Unhandled Characteristic UUID: \(characteristic.uuid)")
         }
     }
+
 }
 
 // MARK: - Utils

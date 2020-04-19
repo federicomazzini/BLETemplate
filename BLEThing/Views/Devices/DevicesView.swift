@@ -7,10 +7,6 @@
 
 import SwiftUI
 
-enum PushedItem {
-    case devicesScreen, CharacteristicsScreen
-}
-
 struct DevicesView: View {
     @ObservedObject var viewModel: DevicesViewModel
 
@@ -22,7 +18,7 @@ struct DevicesView: View {
         let navigation = NavigationLink(
             destination: CharacteristicsView(viewModel: CharacteristicsViewModel()),
             isActive: $viewModel.connected
-        ) { EmptyView() }
+        ) { EmptyView() }.isDetailLink(false)
 
         return
             NavigationView {
@@ -37,6 +33,8 @@ struct DevicesView: View {
                     }
                     .listStyle(GroupedListStyle())
                     .navigationBarTitle("Searching Devices")
+                }.onAppear() {
+                    self.viewModel.disconnect()
                 }
             }
     }
