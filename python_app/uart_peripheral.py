@@ -5,8 +5,11 @@ from example_advertisement import Advertisement
 from example_advertisement import register_ad_cb, register_ad_error_cb
 from example_gatt_server import Service, Characteristic
 from example_gatt_server import register_app_cb, register_app_error_cb
+# from threading import Thread
+import concurrent.futures
+from threading import Timer
+
 from audio_player import play_session
-from threading import Thread
  
 BLUEZ_SERVICE_NAME =           'org.bluez'
 DBUS_OM_IFACE =                'org.freedesktop.DBus.ObjectManager'
@@ -18,6 +21,14 @@ UART_RX_CHARACTERISTIC_UUID =  '0a60d08c-80c9-4332-899b-27d54b14f0d2'
 UART_TX_CHARACTERISTIC_UUID =  '6e400003-b5a3-f393-e0a9-e50e24dcca9e'
 LOCAL_NAME =                   'rpi-gatt-server'
 mainloop = None
+
+# Prevent the scheduling of sessions in parallel.
+audioScheduled = False
+
+def end_current_schedule():
+    global audioScheduled
+    audioScheduled = False
+    print("Ended session blocking timer")
  
 class TxCharacteristic(Characteristic):
     def __init__(self, bus, index, service):
@@ -58,10 +69,26 @@ class RxCharacteristic(Characteristic):
                                 ['write'], service)
  
     def WriteValue(self, value, options):
+        global audioScheduled
+
+        if audioScheduled:
+            print("Session blocked: session blocking timer not finished")
+            return
+
+        audioScheduled = True
+
         print('remote: {}'.format(bytearray(value).decode()))
         minutes = int(bytearray(value).decode())
-        thread = Thread(target = play_session, args = (minutes, ))
-        thread.start()
+        # thread = Thread(target = play_session, args = (minutes, ))
+        # thread.start()
+
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            future = executor.submit(play_session, minutes)
+            sessionDuration = future.result()
+            print("Received session duration: " + str(int(sessionDuration)))
+            print("Starting session blocking timer")
+            timer = Timer(sessionDuration, end_current_schedule)
+            timer.start()
  
 class UartService(Service):
     def __init__(self, bus, index):

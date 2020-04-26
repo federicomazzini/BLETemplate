@@ -1,6 +1,7 @@
-import os
+# import os
 from threading import Timer
 from mutagen.mp3 import MP3
+from Naked.toolshed.shell import execute_js
 
 time_currently_set = False
 default_player = 'mplayer'
@@ -8,6 +9,20 @@ bell_file_path = './bell.mp3'
 speech_file_path = './speech.mp3'
 default_delay = 3.0
 speech_session_min_ratio = 2.0
+
+def play_bell_js():
+    success = execute_js('./playBell.js')
+    if success:
+        print("play_bell_js success")
+    else:
+        print("play_bell_js error")
+
+def play_speech_js():
+    success = execute_js('./playSpeech.js')
+    if success:
+        print("play_speech_js success")
+    else:
+        print("play_speech_js error")
 
 def play_bell_command():
     return default_player + " " + bell_file_path
@@ -34,18 +49,21 @@ def audio_duration(file_name):
 
 def play_speech():
     print("Playing speech")
-    command = play_speech_command()
-    os.system(command)
+    # command = play_speech_command()
+    # os.system(command)
+    play_speech_js()
 
 def play_start_bell():
     print("Playing start bell")
-    command = play_bell_command()
-    os.system(command)
+    # command = play_bell_command()
+    # os.system(command)
+    play_bell_js()
 
 def play_end_bell():
     print("Playing end bell")
-    command = play_bell_command()
-    os.system(command)
+    # command = play_bell_command()
+    # os.system(command)
+    play_bell_js()
     global time_currently_set
     time_currently_set = False
 
@@ -72,3 +90,9 @@ def play_session(minutes):
     timer3 = Timer(float(session_seconds_duration + default_delay * 2), play_end_bell)
     timer3.start()
 
+    print("Returning session duration to main thread")
+    totalDuration = float(session_seconds_duration + default_delay * 2 + 1)
+    return totalDuration
+
+#uncomment this to test any new audio player
+# play_bell_js()
