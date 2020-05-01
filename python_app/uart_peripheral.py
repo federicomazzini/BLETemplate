@@ -191,6 +191,7 @@ def main():
     try:
         mainloop.run()
     except KeyboardInterrupt:
+        print('\nReleasing Advertisement')
         adv.Release()
  
 if __name__ == '__main__':
