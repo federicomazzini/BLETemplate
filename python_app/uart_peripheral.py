@@ -24,6 +24,8 @@ mainloop = None
 
 audioScheduled = False # Prevent the scheduling of sessions in parallel.
 
+notifyInterval = 3000 # in ms
+
 def end_schedule():
     global audioScheduled
     audioScheduled = False
@@ -53,13 +55,14 @@ class TxCharacteristic(Characteristic):
         return self.notifying
 
     def _update_schedule_state(self):
+        global notifyInterval
         print('Notify Timer characteristic: Setting up timeout')
 
         if not self.notifying:
             print('Notify Timer characteristic canceled!!!')
             return
 
-        GLib.timeout_add(1000, self.update_schedule_state)
+        GLib.timeout_add(notifyInterval, self.update_schedule_state)
  
     # def send_tx(self, s):
     #     if not self.notifying:
