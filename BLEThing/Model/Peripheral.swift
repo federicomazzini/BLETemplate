@@ -22,7 +22,7 @@ struct Peripheral: Connectable {
     }
 
     static let mockPeripheral = Peripheral(
-        serviceIds: [Constants.Characteristics.uptimeCharacteristicUUID.rawValue],
+        serviceIds: [Constants.Characteristics.deviceStateCharacteristicUUID.rawValue],
         uuid: Constants.uptimeServiceUUID
     )
 }
@@ -45,7 +45,7 @@ struct Characteristic: ConnectableCharacteristic {
     }
 
     static let mockCharacteristic = Characteristic(
-        uuid: Constants.Characteristics.uptimeCharacteristicUUID.rawValue,
+        uuid: Constants.Characteristics.deviceStateCharacteristicUUID.rawValue,
         types: [ConnectableCharacteristicType.read],
         value: "Mock Characteristic debug value".data(using: .utf8)
     )

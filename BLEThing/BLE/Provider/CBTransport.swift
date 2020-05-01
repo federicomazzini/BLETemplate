@@ -37,7 +37,7 @@ class CBTransport: NSObject, Transport {
     // MARK: - Characteristics
 
     // See CBCharacteristicProperties struct documentation.
-    let uptimeCharacteristicCBUUID = Constants.Characteristics.uptimeCharacteristicUUID.rawValue
+    let uptimeCharacteristicCBUUID = Constants.Characteristics.deviceStateCharacteristicUUID.rawValue
 
     // MARK: - Init
     
@@ -154,6 +154,7 @@ extension CBTransport: CBCentralManagerDelegate {
     }
 
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
+        print("*** Peripheral Disconnected ***")
         _connectedPeripheralSubject.send(.disconnected)
     }
 
@@ -218,6 +219,14 @@ extension CBTransport: CBPeripheralDelegate {
             print("Unhandled Characteristic UUID: \(characteristic.uuid)")
         }
     }
+
+//    switch peripheral.state {
+//    case .disconnected:
+//        print("*** Peripheral Disconnected ***")
+//        _connectedPeripheralSubject.send(.disconnected)
+//    default:
+//        print("Peripheral changed to state: \(peripheral.state)")
+//    }
 
 }
 

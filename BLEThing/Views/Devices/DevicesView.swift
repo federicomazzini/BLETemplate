@@ -32,7 +32,7 @@ struct DevicesView: View {
                         }
                     }
                     .listStyle(GroupedListStyle())
-                    .navigationBarTitle("Searching Devices")
+                    .navigationBarTitle("Discovered Devices")
                 }.onAppear() {
                     self.viewModel.disconnect()
                 }

@@ -59,7 +59,7 @@ struct CharacteristicRowViewModel: Identifiable {
 
     var name: String {
         for char in Constants.Characteristics.allCases {
-            if characteristic.uuidString == char.rawValue {
+            if characteristic.uuidString.uppercased() == char.rawValue.uppercased() {
                 return char.displayName
             }
         }
