@@ -33,7 +33,7 @@ class CharacteristicsViewModel: ObservableObject, Identifiable {
     }
 
     func selectedCharacteristic(characteristic: Characteristic) {
-        if characteristic.type == .write {
+        if characteristic.types.contains(.write) {
             selectWriteCharacteristic = true
         }
     }
@@ -57,13 +57,19 @@ struct CharacteristicRowViewModel: Identifiable {
         return characteristic.uuidString
     }
 
-    var type: String {
-        switch characteristic.type {
-        case .read:
-            return "Read"
-        case .write:
-            return "Write"
+    var types: String {
+        var str = ""
+        for type in characteristic.types {
+            switch type {
+            case .read:
+                str = str + "READ "
+            case .write:
+                str = str + "WRITE "
+            case .notify:
+                str = str + "NOTIFY "
+            }
         }
+        return str
     }
 
 

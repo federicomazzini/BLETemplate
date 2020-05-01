@@ -1,4 +1,4 @@
-import sys
+# import sys
 import dbus, dbus.mainloop.glib
 from gi.repository import GLib
 from example_advertisement import Advertisement
@@ -18,50 +18,70 @@ GATT_MANAGER_IFACE =           'org.bluez.GattManager1'
 GATT_CHRC_IFACE =              'org.bluez.GattCharacteristic1'
 UART_SERVICE_UUID =            'ff51b30e-d7e2-4d93-8842-a7c4a57dfb07'
 UART_RX_CHARACTERISTIC_UUID =  '0a60d08c-80c9-4332-899b-27d54b14f0d2'
-UART_TX_CHARACTERISTIC_UUID =  '6e400003-b5a3-f393-e0a9-e50e24dcca9e'
+UART_TX_CHARACTERISTIC_UUID =  'ff51b30e-d7e2-4d93-8842-a7c4a57dfb09'
 LOCAL_NAME =                   'rpi-gatt-server'
 mainloop = None
 
-# Prevent the scheduling of sessions in parallel.
-audioScheduled = False
+audioScheduled = False # Prevent the scheduling of sessions in parallel.
 
-def end_current_schedule():
+def end_schedule():
     global audioScheduled
     audioScheduled = False
     print("Ended session blocking timer")
+
+def start_schedule():
+    global audioScheduled
+    audioScheduled = True
+    print("Starting session blocking timer")
  
 class TxCharacteristic(Characteristic):
     def __init__(self, bus, index, service):
-        Characteristic.__init__(self, bus, index, UART_TX_CHARACTERISTIC_UUID,
-                                ['notify'], service)
+        Characteristic.__init__(self, bus, index, UART_TX_CHARACTERISTIC_UUID, ['notify'], service)
         self.notifying = False
-        GLib.io_add_watch(sys.stdin, GLib.IO_IN, self.on_console_input)
+        #GLib.io_add_watch(sys.stdin, GLib.IO_IN, self.on_console_input)
  
-    def on_console_input(self, fd, condition):
-        s = fd.readline()
-        if s.isspace():
-            pass
-        else:
-            self.send_tx(s)
-        return True
- 
-    def send_tx(self, s):
-        if not self.notifying:
-            return
+    def update_schedule_state(self):
         value = []
+        global audioScheduled
+        s = str(audioScheduled)
+        print('Notify Timer characteristic, schedule state: ' + s)
+
         for c in s:
             value.append(dbus.Byte(c.encode()))
         self.PropertiesChanged(GATT_CHRC_IFACE, {'Value': value}, [])
+
+        return self.notifying
+
+    def _update_schedule_state(self):
+        print('Notify Timer characteristic: Setting up timeout')
+
+        if not self.notifying:
+            print('Notify Timer characteristic canceled!!!')
+            return
+
+        GLib.timeout_add(1000, self.update_schedule_state)
+ 
+    # def send_tx(self, s):
+    #     if not self.notifying:
+    #         return
+    #     value = []
+    #     for c in s:
+    #         value.append(dbus.Byte(c.encode()))
+    #     self.PropertiesChanged(GATT_CHRC_IFACE, {'Value': value}, [])
  
     def StartNotify(self):
         if self.notifying:
+            print('Already notifying, nothing to do')
             return
         self.notifying = True
+        self._update_schedule_state()
  
     def StopNotify(self):
         if not self.notifying:
+            print('Not notifying, nothing to do')
             return
         self.notifying = False
+        self._update_schedule_state()
  
 class RxCharacteristic(Characteristic):
     def __init__(self, bus, index, service):
@@ -70,12 +90,11 @@ class RxCharacteristic(Characteristic):
  
     def WriteValue(self, value, options):
         global audioScheduled
-
         if audioScheduled:
             print("Session blocked: session blocking timer not finished")
             return
 
-        audioScheduled = True
+        start_schedule()
 
         print('remote: {}'.format(bytearray(value).decode()))
         minutes = int(bytearray(value).decode())
@@ -87,7 +106,7 @@ class RxCharacteristic(Characteristic):
             sessionDuration = future.result()
             print("Received session duration: " + str(int(sessionDuration)))
             print("Starting session blocking timer")
-            timer = Timer(sessionDuration, end_current_schedule)
+            timer = Timer(sessionDuration, end_schedule)
             timer.start()
  
 class UartService(Service):

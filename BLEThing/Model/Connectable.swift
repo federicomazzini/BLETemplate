@@ -8,7 +8,7 @@
 import Foundation
 
 enum ConnectableCharacteristicType {
-    case read, write
+    case read, write, notify
 }
 
 enum ConnectableState {
@@ -22,5 +22,5 @@ protocol Connectable {
 
 protocol ConnectableCharacteristic {
     var uuidString: String { get }
-    var type: ConnectableCharacteristicType { get }
+    var types: [ConnectableCharacteristicType] { get }
 }

@@ -37,13 +37,17 @@ class CBTransport: NSObject, Transport {
     // MARK: - Characteristics
 
     // See CBCharacteristicProperties struct documentation.
-    let uptimeCharacteristicCBUUID = CBUUID(string: Constants.Characteristics.uptimeCharacteristicUUID.rawValue)
+    let uptimeCharacteristicCBUUID = Constants.Characteristics.uptimeCharacteristicUUID.rawValue
 
     // MARK: - Init
     
     override init() {
         super.init()
         centralManager = CBCentralManager(delegate: self, queue: nil)
+
+        // TODO: test this
+        cleanDiscoveredServices()
+
         discoveredPeripheralsPublisher = _discoveredPeripheralsSubject.eraseToAnyPublisher()
         connectedPeripheralPublisher = _connectedPeripheralSubject.eraseToAnyPublisher()
         discoveredCharacteristicsPublisher = _discoveredCharacteristicsSubject.eraseToAnyPublisher()
@@ -69,7 +73,8 @@ class CBTransport: NSObject, Transport {
         })
 
         guard let first = pers.first else {
-            // TODO: send error through _connectedPeripheralSubject
+            // Send error through _connectedPeripheralSubject
+            _connectedPeripheralSubject.send(.disconnected)
             return
         }
 
@@ -82,7 +87,8 @@ class CBTransport: NSObject, Transport {
         })
 
         guard let first = chars.first else {
-            // TODO: send error through _connectedPeripheralSubject
+            // Send error through _connectedPeripheralSubject
+            _connectedPeripheralSubject.send(.disconnected)
             return
         }
 
@@ -112,21 +118,21 @@ extension CBTransport: CBCentralManagerDelegate {
 
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         switch central.state {
-            case .unknown:
-                print("central.state is .unknown")
-            case .resetting:
-                print("central.state is .resetting")
-            case .unsupported:
-                print("central.state is .unsupported")
-            case .unauthorized:
-                print("central.state is .unauthorized")
-            case .poweredOff:
-                print("central.state is .poweredOff")
-            case .poweredOn:
-                scanForKnownPeripherals()
-                print("central.state is .poweredOn")
-            @unknown default:
-                print("central.state is .unknown")
+        case .unknown:
+            print("central.state is .unknown")
+        case .resetting:
+            print("central.state is .resetting")
+        case .unsupported:
+            print("central.state is .unsupported")
+        case .unauthorized:
+            print("central.state is .unauthorized")
+        case .poweredOff:
+            print("central.state is .poweredOff")
+        case .poweredOn:
+            scanForKnownPeripherals()
+            print("central.state is .poweredOn")
+        @unknown default:
+            print("central.state is .unknown")
         }
     }
 
@@ -141,11 +147,26 @@ extension CBTransport: CBCentralManagerDelegate {
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         print("Connected!")
         _connectedPeripheralSubject.send(.connected)
-        _connectedPeripheral?.discoverServices([uptimeServiceCBUUID]) // requires didDiscoverServices implementation from CBPeripheralDelegate
+
+        // TODO: test this
+        cleanDiscoveredServices()
+
+        // discoverServices(_ serviceUUIDs: [CBUUID]?) requires didDiscoverServices implementation from CBPeripheralDelegate
+        _connectedPeripheral?.discoverServices([uptimeServiceCBUUID])
     }
 
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         _connectedPeripheralSubject.send(.disconnected)
+    }
+
+    func cleanDiscoveredServices() {
+        _discoveredPeripheralsSubject = PassthroughSubject<Connectable, Never>()
+        _connectedPeripheralSubject = PassthroughSubject<ConnectableState, Never>()
+        _discoveredCharacteristicsSubject = PassthroughSubject<ConnectableCharacteristic, Never>()
+        _discoveredCharacteristics = Set<CBCharacteristic>()
+        discoveredPeripheralsPublisher = _discoveredPeripheralsSubject.eraseToAnyPublisher()
+        connectedPeripheralPublisher = _connectedPeripheralSubject.eraseToAnyPublisher()
+        discoveredCharacteristicsPublisher = _discoveredCharacteristicsSubject.eraseToAnyPublisher()
     }
 
 }
@@ -168,13 +189,14 @@ extension CBTransport: CBPeripheralDelegate {
         for characteristic in characteristics {
             print("Characteristic \(characteristic.uuid)")
             if characteristic.properties.contains(.read) {
-              print("Characteristic properties contains .read")
+                print("Characteristic properties contains .read")
             }
             if characteristic.properties.contains(.notify) {
-              print("Characteristic properties contains .notify")
+                print("Characteristic properties contains .notify")
+                peripheral.setNotifyValue(true, for: characteristic)
             }
             if characteristic.properties.contains(.write) {
-              print("Characteristic properties contains .write")
+                print("Characteristic properties contains .write")
             }
 
             _discoveredCharacteristicsSubject.send(characteristic.toConnectable())
@@ -184,11 +206,15 @@ extension CBTransport: CBPeripheralDelegate {
     }
 
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-        switch characteristic.uuid {
-          case uptimeCharacteristicCBUUID:
-            print(characteristic.value ?? "no value")
-            print("uptimeCharacteristic value: \(uptime(from: characteristic))")
-          default:
+        switch characteristic.uuid.uuidString.uppercased() {
+        case uptimeCharacteristicCBUUID.uppercased():
+            if let value = characteristic.value, let string = valueToString(from: value) {
+//                print("uptimeCharacteristic value: \(uptime(from: characteristic))")
+                print("uptimeCharacteristic value: \(string)")
+            } else {
+                print(characteristic.value ?? "no value")
+            }
+        default:
             print("Unhandled Characteristic UUID: \(characteristic.uuid)")
         }
     }
@@ -198,33 +224,44 @@ extension CBTransport: CBPeripheralDelegate {
 // MARK: - Utils
 
 extension CBTransport {
-    private func uptime(from characteristic: CBCharacteristic) -> Int {
-        guard let characteristicData = characteristic.value else {
-            return 0
-        }
 
-        guard let string = String(bytes: characteristicData, encoding: .utf8) else {
+    private func valueToString(from value: Data) -> String? {
+        guard let string = String(bytes: value, encoding: .utf8) else {
             print("CBServiceProvider: not a valid UTF-8 sequence")
-            return 0
+            return nil
         }
 
-        guard let dic = JSONStringToDictionary(string: string) else {
-            return 0
-        }
-
-        return dic["uptime"] as? Int ?? 0
+        return string
     }
 
-    func JSONStringToDictionary(string: String) -> [String: Any]? {
-        if let data = string.data(using: .utf8) {
-            do {
-                return try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-            } catch {
-                print(error.localizedDescription)
-            }
-        }
-        return nil
-    }
+//    private func uptime(from characteristic: CBCharacteristic) -> Int {
+//        guard let characteristicData = characteristic.value else {
+//            return 0
+//        }
+//
+//        guard let string = String(bytes: characteristicData, encoding: .utf8) else {
+//            print("CBServiceProvider: not a valid UTF-8 sequence")
+//            return 0
+//        }
+//
+//        guard let dic = JSONStringToDictionary(string: string) else {
+//            return 0
+//        }
+//
+//        return dic["uptime"] as? Int ?? 0
+//    }
+
+//    func JSONStringToDictionary(string: String) -> [String: Any]? {
+//        if let data = string.data(using: .utf8) {
+//            do {
+//                return try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+//            } catch {
+//                print(error.localizedDescription)
+//            }
+//        }
+//        return nil
+//    }
+
 }
 
 // MARK: - CBPeripheral Connectable conformance
@@ -246,12 +283,18 @@ extension CBPeripheral: Connectable {
 // MARK: - CBService ConnectableService conformance
 
 extension CBCharacteristic: ConnectableCharacteristic {
-    var type: ConnectableCharacteristicType {
+    var types: [ConnectableCharacteristicType] {
+        var pptList = [ConnectableCharacteristicType]()
         if self.properties.contains(.write) {
-            return .write
-        } else {
-            return .read
+            pptList.append(.write)
         }
+        if self.properties.contains(.read) {
+            pptList.append(.read)
+        }
+        if self.properties.contains(.notify) {
+            pptList.append(.notify)
+        }
+        return pptList
     }
 
     var uuidString: String {

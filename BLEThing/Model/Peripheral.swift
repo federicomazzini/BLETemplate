@@ -29,20 +29,20 @@ struct Peripheral: Connectable {
 
 struct Characteristic: ConnectableCharacteristic {
     var uuidString: String
-    var type: ConnectableCharacteristicType
+    var types: [ConnectableCharacteristicType]
 
-    init(uuid: String, type: ConnectableCharacteristicType) {
+    init(uuid: String, types: [ConnectableCharacteristicType]) {
         self.uuidString = uuid
-        self.type = type
+        self.types = types
     }
 
     init(connectableCharacteristic: ConnectableCharacteristic) {
         self.uuidString = connectableCharacteristic.uuidString
-        self.type = connectableCharacteristic.type
+        self.types = connectableCharacteristic.types
     }
 
     static let mockCharacteristic = Characteristic(
         uuid: Constants.Characteristics.uptimeCharacteristicUUID.rawValue,
-        type: .read
+        types: [.read]
     )
 }

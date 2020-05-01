@@ -31,7 +31,7 @@ struct CharacteristicRowView: View {
                     Text(viewModel.name + ":")
                         .font(.system(size: 14))
                         .lineLimit(1)
-                    Text(viewModel.type + " characteristic")
+                    Text(viewModel.types + " characteristic")
                         .font(.system(size: 14))
                         .lineLimit(1)
                 }
