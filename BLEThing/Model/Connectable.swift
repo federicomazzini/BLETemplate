@@ -23,4 +23,5 @@ protocol Connectable {
 protocol ConnectableCharacteristic {
     var uuidString: String { get }
     var types: [ConnectableCharacteristicType] { get }
+    var characteristicValue: Data? { get }
 }

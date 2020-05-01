@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8E433DC8245CCBDC007D38EA /* DeviceStateRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E433DC7245CCBDC007D38EA /* DeviceStateRowView.swift */; };
 		8E5737E424392D5900D94F07 /* Transport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E5737E324392D5900D94F07 /* Transport.swift */; };
 		8E5737E624392D7900D94F07 /* Connectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E5737E524392D7900D94F07 /* Connectable.swift */; };
 		8E5737E9243967DF00D94F07 /* CharacteristicsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E5737E8243967DF00D94F07 /* CharacteristicsView.swift */; };
@@ -41,6 +42,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8E433DC7245CCBDC007D38EA /* DeviceStateRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceStateRowView.swift; sourceTree = "<group>"; };
 		8E5737E324392D5900D94F07 /* Transport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transport.swift; sourceTree = "<group>"; };
 		8E5737E524392D7900D94F07 /* Connectable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connectable.swift; sourceTree = "<group>"; };
 		8E5737E8243967DF00D94F07 /* CharacteristicsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacteristicsView.swift; sourceTree = "<group>"; };
@@ -102,6 +104,7 @@
 				8E5737E8243967DF00D94F07 /* CharacteristicsView.swift */,
 				8E5737EA2439686D00D94F07 /* CharacteristicsViewModel.swift */,
 				8E5737EC24396BE700D94F07 /* CharacteristicRowView.swift */,
+				8E433DC7245CCBDC007D38EA /* DeviceStateRowView.swift */,
 			);
 			path = Characteristics;
 			sourceTree = "<group>";
@@ -328,6 +331,7 @@
 				8E6DC853243AD04800F184FD /* WriteToCharacteristicView.swift in Sources */,
 				8E6DC855243AD5B900F184FD /* WriteToCharacteristicViewModel.swift in Sources */,
 				8E9ADDA12411E9CE00054BAA /* CBTransport.swift in Sources */,
+				8E433DC8245CCBDC007D38EA /* DeviceStateRowView.swift in Sources */,
 				8E70A0B52431B71A000D6262 /* Constants.swift in Sources */,
 				8E5737ED24396BE700D94F07 /* CharacteristicRowView.swift in Sources */,
 			);

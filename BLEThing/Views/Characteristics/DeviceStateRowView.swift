@@ -8,13 +8,32 @@
 import SwiftUI
 
 struct DeviceStateRowView: View {
+
+    private let viewModel: DeviceStateRowViewModel?
+
+    init(viewModel: DeviceStateRowViewModel?) {
+        self.viewModel = viewModel
+    }
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Text(viewModel?.state ?? "Checking...")
+        .font(.system(size: 16))
+        .lineLimit(1)
     }
 }
 
-struct DeviceStateRowView_Previews: PreviewProvider {
+#if DEBUG
+struct DeviceStateRow_Previews: PreviewProvider {
     static var previews: some View {
-        DeviceStateRowView()
+        let characteristic = Characteristic.mockCharacteristic
+        let viewModel = DeviceStateRowViewModel(characteristic: characteristic)
+        // Display size categories
+        return ForEach(ContentSizeCategory.allCases, id: \.self) { sizeCategory in
+            DeviceStateRowView(viewModel: viewModel)
+                .previewLayout(.sizeThatFits)
+                .environment(\.sizeCategory, sizeCategory)
+                .previewDisplayName("\(sizeCategory)")
+        }
     }
 }
+#endif

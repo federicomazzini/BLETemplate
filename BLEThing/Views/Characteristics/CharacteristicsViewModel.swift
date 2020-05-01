@@ -11,6 +11,7 @@ import Combine
 class CharacteristicsViewModel: ObservableObject, Identifiable {
 
     @Published var dataSource: [CharacteristicRowViewModel] = []
+    @Published var deviceStateDataSource: DeviceStateRowViewModel?
     @Published var selectWriteCharacteristic: Bool = false
 
     private var disposables = Set<AnyCancellable>()
@@ -23,11 +24,20 @@ class CharacteristicsViewModel: ObservableObject, Identifiable {
         // get discovered characteristics and update dataSource
         _ = client.transport.discoveredCharacteristicsPublisher
             .sink { (connectableCharacteristic) in
+
+                // create Characteristic
                 let characteristic = Characteristic(connectableCharacteristic: connectableCharacteristic)
-                let viewModel = CharacteristicRowViewModel(characteristic: characteristic, {
-                    self.selectedCharacteristic(characteristic: characteristic)
-                })
-                self.dataSource.append(viewModel)
+
+                // check if its the Notify characteristic
+                if connectableCharacteristic.types.contains(.notify) {
+                    let deviceStateRowViewModel = DeviceStateRowViewModel(characteristic: characteristic)
+                    self.deviceStateDataSource = deviceStateRowViewModel
+                } else {
+                    let viewModel = CharacteristicRowViewModel(characteristic: characteristic, {
+                        self.selectedCharacteristic(characteristic: characteristic)
+                    })
+                    self.dataSource.append(viewModel)
+                }
             }
             .store(in: &disposables)
     }
@@ -76,5 +86,34 @@ struct CharacteristicRowViewModel: Identifiable {
     init(characteristic: Characteristic, _ callToAction: CallToAction = nil) {
         self.characteristic = characteristic
         self.callToAction = callToAction
+    }
+}
+
+struct DeviceStateRowViewModel: Identifiable {
+    private let characteristic: Characteristic
+
+    var id: String {
+        return characteristic.uuidString
+    }
+
+    var state: String? {
+        if let value = characteristic.characteristicValue,
+            let stringValue = String(data: value, encoding: .utf8)
+        {
+            switch stringValue {
+            case "False":
+                return "Waiting for new schedule"
+            case "True":
+                return "Timer Scheduled"
+            default:
+                return nil
+            }
+        } else {
+            return nil
+        }
+    }
+
+    init(characteristic: Characteristic) {
+        self.characteristic = characteristic
     }
 }

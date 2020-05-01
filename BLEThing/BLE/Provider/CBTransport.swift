@@ -93,16 +93,14 @@ class CBTransport: NSObject, Transport {
         }
 
         var data: Data!
-
         do {
             data = try JSONEncoder().encode(seconds)
+            _connectedPeripheral?.writeValue(data, for: first, type: .withResponse)
         }
         catch {
-            print("Couldn't create the json string for date \(self)")
+            print("Couldn't create the json string for message")
             return
         }
-
-        _connectedPeripheral?.writeValue(data, for: first, type: .withResponse)
     }
 
     func cancelConnection() {
@@ -145,7 +143,7 @@ extension CBTransport: CBCentralManagerDelegate {
     }
 
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-        print("Connected!")
+        print("*** Connected to Peripheral ***")
         _connectedPeripheralSubject.send(.connected)
 
         // TODO: test this
@@ -168,7 +166,6 @@ extension CBTransport: CBCentralManagerDelegate {
         connectedPeripheralPublisher = _connectedPeripheralSubject.eraseToAnyPublisher()
         discoveredCharacteristicsPublisher = _discoveredCharacteristicsSubject.eraseToAnyPublisher()
     }
-
 }
 
 // MARK: - CBPeripheralDelegate
@@ -211,6 +208,9 @@ extension CBTransport: CBPeripheralDelegate {
             if let value = characteristic.value, let string = valueToString(from: value) {
 //                print("uptimeCharacteristic value: \(uptime(from: characteristic))")
                 print("uptimeCharacteristic value: \(string)")
+
+                // Publish notified value
+                _discoveredCharacteristicsSubject.send(characteristic.toConnectable())
             } else {
                 print(characteristic.value ?? "no value")
             }
@@ -299,6 +299,10 @@ extension CBCharacteristic: ConnectableCharacteristic {
 
     var uuidString: String {
         self.uuid.uuidString
+    }
+
+    var characteristicValue: Data? {
+        self.value
     }
 
     func toConnectable() -> some ConnectableCharacteristic {

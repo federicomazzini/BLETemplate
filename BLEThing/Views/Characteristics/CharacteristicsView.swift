@@ -27,17 +27,24 @@ struct CharacteristicsView: View {
                     if viewModel.dataSource.isEmpty {
                         emptySection
                     } else {
-                        devicesSection
+                        deviceStateSection
+                        characteristicsSection
                     }
                 }
                 .listStyle(GroupedListStyle())
-                .navigationBarTitle("Searching Characteristics", displayMode: .inline)
+                .navigationBarTitle("Discovered Characteristics", displayMode: .inline)
         }
     }
 
-    var devicesSection: some View {
+    var characteristicsSection: some View {
         Section {
             ForEach(viewModel.dataSource, content: CharacteristicRowView.init(viewModel:))
+        }
+    }
+
+    var deviceStateSection: some View {
+        Section(header: Text("Device State")) {
+            DeviceStateRowView.init(viewModel: viewModel.deviceStateDataSource)
         }
     }
 

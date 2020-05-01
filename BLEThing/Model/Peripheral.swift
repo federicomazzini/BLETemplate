@@ -30,19 +30,23 @@ struct Peripheral: Connectable {
 struct Characteristic: ConnectableCharacteristic {
     var uuidString: String
     var types: [ConnectableCharacteristicType]
+    var characteristicValue: Data?
 
-    init(uuid: String, types: [ConnectableCharacteristicType]) {
+    init(uuid: String, types: [ConnectableCharacteristicType], value: Data?) {
         self.uuidString = uuid
         self.types = types
+        self.characteristicValue = value
     }
 
     init(connectableCharacteristic: ConnectableCharacteristic) {
         self.uuidString = connectableCharacteristic.uuidString
         self.types = connectableCharacteristic.types
+        self.characteristicValue = connectableCharacteristic.characteristicValue
     }
 
     static let mockCharacteristic = Characteristic(
         uuid: Constants.Characteristics.uptimeCharacteristicUUID.rawValue,
-        types: [.read]
+        types: [ConnectableCharacteristicType.read],
+        value: "Mock Characteristic debug value".data(using: .utf8)
     )
 }
